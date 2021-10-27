@@ -1,0 +1,5 @@
+micronaut:
+  application:
+    name: nativeMicronaut
+    marvel:
+      serverUrl: https://gateway.marvel.com:443
