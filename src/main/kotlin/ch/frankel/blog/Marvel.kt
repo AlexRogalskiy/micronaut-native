@@ -1,6 +1,5 @@
 package ch.frankel.blog
 
-import io.micronaut.context.annotation.Bean
 import io.micronaut.context.annotation.Factory
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.annotation.*
@@ -14,7 +13,6 @@ import java.security.MessageDigest
 @Factory
 class BeanFactory {
 
-    @Bean
     @Singleton
     fun messageDigest(): MessageDigest = MessageDigest.getInstance("MD5")
 }
