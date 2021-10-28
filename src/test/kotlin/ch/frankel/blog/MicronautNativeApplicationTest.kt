@@ -1,5 +1,8 @@
 package ch.frankel.blog
 
+import io.micronaut.http.HttpHeaders
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.MediaType
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.runtime.server.EmbeddedServer
@@ -49,6 +52,7 @@ class MicronautNativeApplicationTest : TestPropertyProvider {
     fun `should deserialize JSON payload from server and serialize it back again`() {
         val mockServerClient = MockServerClient(mockServer.containerIpAddress, mockServer.serverPort)
         val sample = this::class.java.classLoader.getResource("sample.json")?.readText()
+
         mockServerClient.`when`(
             HttpRequest.request()
                 .withMethod("GET")
@@ -59,15 +63,19 @@ class MicronautNativeApplicationTest : TestPropertyProvider {
                 .withHeader("Content-Type", "application/json")
                 .withBody(sample)
         )
-        val body = client.toBlocking().retrieve(server.url.toExternalForm())
-        val root = JSONValue.parse(body) as JSONArray
-        val data = (root[0] as JSONObject)["data"] as JSONObject
-        val count = data.getAsNumber("count")
-        assertEquals(1, count)
-        val results = data["results"]
-        assertTrue(results is JSONArray)
-        val firstResult = (results as JSONArray)[0] as JSONObject
-        val name = firstResult["name"]
-        assertEquals("Anita Blake", name)
+
+        // With `retrieve` you just get the body and can assert on it
+        val body = client.toBlocking().retrieve(server.url.toExternalForm(), Model::class.java)
+        assertEquals(1, body.data.count)
+        assertEquals("Anita Blake", body.data.results.first().name)
+
+        // With `exchange` you get the http response and can assert HTTP Status, Headers,...
+        val response = client.toBlocking().exchange(server.url.toExternalForm(), Model::class.java)
+        assertEquals(HttpStatus.OK, response.status())
+        assertEquals(MediaType.APPLICATION_JSON, response.headers[HttpHeaders.CONTENT_TYPE])
+        val bodyFromResponse = response.getBody(Model::class.java)
+        assertTrue(bodyFromResponse.isPresent)
+        assertEquals(1, bodyFromResponse.get().data.count)
+        assertEquals("Anita Blake", bodyFromResponse.get().data.results.first().name)
     }
 }

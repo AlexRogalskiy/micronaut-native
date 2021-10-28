@@ -3,3 +3,5 @@ micronaut:
     name: nativeMicronaut
     marvel:
       serverUrl: https://gateway.marvel.com:443
+jackson:
+  serialization-inclusion: always
