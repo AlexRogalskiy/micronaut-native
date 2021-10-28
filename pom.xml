@@ -17,9 +17,9 @@
         <release.version>11</release.version>
         <micronaut.version>3.1.1</micronaut.version>
         <exec.mainClass>ch.frankel.blog.MicronautNativeApplicationKt</exec.mainClass>
-        <kotlinVersion>1.5.21</kotlinVersion>
+        <kotlinVersion>1.5.31</kotlinVersion>
         <micronaut.runtime>netty</micronaut.runtime>
-        <testcontainers.version>1.16.0</testcontainers.version>
+        <testcontainers.version>1.16.2</testcontainers.version>
     </properties>
     <dependencies>
         <dependency>
@@ -45,10 +45,6 @@
         <dependency>
             <groupId>io.micronaut.kotlin</groupId>
             <artifactId>micronaut-kotlin-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
