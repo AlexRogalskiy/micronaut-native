@@ -6,6 +6,6 @@ import io.micronaut.context.annotation.ConfigurationProperties
 @ConfigurationProperties("micronaut.application.marvel")
 data class MarvelProperties @ConfigurationInject constructor(
     val serverUrl: String,
-    val apiKey: String?,
-    val privateKey: String?
+    val apiKey: String,
+    val privateKey: String
 )

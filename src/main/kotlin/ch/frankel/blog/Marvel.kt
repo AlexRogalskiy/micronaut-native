@@ -29,37 +29,32 @@ class MarvelController(
         @QueryValue offset: String?,
         @QueryValue orderBy: String?
     ): Publisher<Model> {
-        val uri = UriBuilder.of("${properties.serverUrl}/v1/public/characters")
+        val uri = UriBuilder
+            .of("${properties.serverUrl}/v1/public/characters")
             .queryParamsWith(properties, digest)
-            .queryParamsWith(limit, offset, orderBy)
+            .queryParamsWith(
+                mapOf("limit" to limit, "offset" to offset, "orderBy" to orderBy)
+            )
             .build()
-        val request = HttpRequest.GET<Any>(uri)
+        val request = HttpRequest.GET<Unit>(uri)
         return client.retrieve(request, Model::class.java)
     }
 }
 
-private fun UriBuilder.queryParamsWith(limit: String?, offset: String?, orderBy: String?): UriBuilder {
-    limit?.let {
-        queryParam("limit", limit)
-    }
-    offset?.let {
-        queryParam("offset", offset)
-    }
-    orderBy?.let {
-        queryParam("orderBy", orderBy)
-    }
-    return this
+private fun UriBuilder.queryParamsWith(params: Map<String, String?>) = apply {
+    params.entries
+        .filter { it.value != null }
+        .forEach { queryParam(it.key, it.value) }
 }
 
-private fun UriBuilder.queryParamsWith(props: MarvelProperties, digest: MessageDigest): UriBuilder {
+private fun UriBuilder.queryParamsWith(props: MarvelProperties, digest: MessageDigest) = apply {
     val ts = System.currentTimeMillis().toString()
     queryParam("ts", ts)
     queryParam("apikey", props.apiKey)
     val md5 = "$ts${props.privateKey}${props.apiKey}".toMd5(digest)
     queryParam("hash", md5)
-    return this
 }
 
-private fun String.toMd5(digest: MessageDigest): String {
-    return BigInteger(1, digest.digest(toByteArray())).toString(16).padStart(32, '0')
-}
+private fun String.toMd5(digest: MessageDigest) = BigInteger(1, digest.digest(toByteArray()))
+    .toString(16)
+    .padStart(32, '0')

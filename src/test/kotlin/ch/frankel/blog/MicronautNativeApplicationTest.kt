@@ -28,11 +28,10 @@ import org.testcontainers.utility.DockerImageName
 class MicronautNativeApplicationTest : TestPropertyProvider {
 
     @Inject
-    @Client
-    lateinit var client: HttpClient
+    private lateinit var client: HttpClient
 
     @Inject
-    lateinit var server: EmbeddedServer
+    private lateinit var server: EmbeddedServer
 
     companion object {
 
